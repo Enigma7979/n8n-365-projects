@@ -1,0 +1,108 @@
+{
+  "name": "001-Smart-Morning-Notifier",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                0
+              ],
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -48,
+        0
+      ],
+      "id": "8b14e569-dd7d-4738-97d0-3965b7e407dc",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "245640981",
+        "text": "=📅 {{ $now.format('YYYY-MM-DD') }} 📌 اليوم: {{ $json.day }}  📋 مهام اليوم: {{ $json.task }}  💬 اقتباس اليوم: {{ $json.quote }}  🚀 بالتوفيق!",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "40785c7f-5d0b-4cd9-9133-ca4759caae09",
+      "name": "Send a text message",
+      "webhookId": "1dad33dc-0953-49fa-b397-08d4348a909c",
+      "credentials": {
+        "telegramApi": {
+          "id": "YOJ1Xt5IVk62QePx",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const tasks = [\n  // الاثنين (0)\n  \"📝 نشر بوست على X\\n📝 نشر بوست على LinkedIn\\n📧 تفقد الإيميلات الشخصية والعمل\\n💬 متابعة رسائل واتساب وتيليجرام وفايبر\\n🏋️ تدريب رياضي\",\n\n  // الثلاثاء (1)\n  \"📝 نشر بوست على X\\n📝 نشر بوست على LinkedIn\\n📧 تفقد الإيميلات الشخصية والعمل\\n💬 متابعة رسائل واتساب وتيليجرام وفايبر\\n🏋️ تدريب رياضي\",\n\n  // الأربعاء (2)\n  \"📝 نشر بوست على X\\n📝 نشر بوست على LinkedIn\\n🧵 كتابة ثريد على X\\n🧵 كتابة ثريد على LinkedIn\\n📧 تفقد الإيميلات الشخصية والعمل\\n💬 متابعة رسائل واتساب وتيليجرام وفايبر\",\n\n  // الخميس (3)\n  \"📝 نشر بوست على X\\n📝 نشر بوست على LinkedIn\\n📧 تفقد الإيميلات الشخصية والعمل\\n💬 متابعة رسائل واتساب وتيليجرام وفايبر\\n🇳🇱 تدريب لغة هولندية\\n🏋️ تدريب رياضي\",\n\n  // الجمعة (4)\n  \"📝 نشر بوست على X\\n📝 نشر بوست على LinkedIn\\n📧 تفقد الإيميلات الشخصية والعمل\\n💬 متابعة رسائل واتساب وتيليجرام وفايبر\\n🏋️ تدريب رياضي\",\n\n  // السبت (5)\n  \"📝 نشر بوست على X\\n📝 نشر بوست على LinkedIn\\n📄 كتابة مقالة\\n📧 تفقد الإيميلات الشخصية والعمل\\n💬 متابعة رسائل واتساب وتيليجرام وفايبر\",\n\n  // الأحد (6)\n  \"📝 نشر بوست على X\\n📝 نشر بوست على LinkedIn\\n📧 تفقد الإيميلات الشخصية والعمل\\n💬 متابعة رسائل واتساب وتيليجرام وفايبر\"\n];\n\n// جلب العداد\nconst counter = $getWorkflowStaticData('global').counter || 0;\n\n// اختيار مهمة اليوم\nconst currentTask = tasks[counter];\n\n// تحديث العداد (0=اثنين, 1=ثلاثاء, ..., 6=أحد ثم يعود للاثنين)\nif (counter < tasks.length - 1) {\n  $getWorkflowStaticData('global').counter = counter + 1;\n} else {\n  $getWorkflowStaticData('global').counter = 0;\n}\n\n// اقتباسات تحفيزية (30 اقتباس)\nconst quotes = [\n  \"من جد وجد ومن زرع حصد\",\n  \"النجاح رحلة وليس وجهة\",\n  \"افعل اليوم ما سيشكرك عليه غداً\",\n  \"كل دقيقة تخطيط توفر 10 دقائق تنفيذ\",\n  \"لا تؤجل عمل اليوم إلى الغد\",\n  \"الاستمرارية تتفوق على الموهبة\",\n  \"الفشل هو أول خطوة نحو النجاح\",\n  \"اجعل من الروتين عادة ومن العادة نجاحاً\",\n  \"العقل السليم في الجسم السليم\",\n  \"تعلم لغة جديدة تفتح لك عالماً جديداً\",\n  \"الرياضة ليست عقاباً بل استثمار في صحتك\",\n  \"كل صباح فرصة جديدة لتبدأ من جديد\",\n  \"النظام هو سر الإنتاجية\",\n  \"لا تقارن نفسك بالآخرين، قارن نفسك بأمسك\",\n  \"التواصل الفعال هو مفتاح العلاقات الناجحة\",\n  \"تعلم شيئاً جديداً كل يوم\",\n  \"الانضباط هو الجسر بين الأهداف والإنجاز\",\n  \"الراحة ليست في عدم العمل، بل في حب ما تعمل\",\n  \"كل خطوة صغيرة تقربك من هدفك الكبير\",\n  \"النجاح هو مجموع الجهود الصغيرة المتكررة يومياً\",\n  \"لا تنتظر الظروف المثالية، اصنعها بنفسك\",\n  \"التخطيط الجيد نصف الإنجاز\",\n  \"الصحة تاج على رؤوس الأصحاء\",\n  \"اللغات جسور بين الثقافات\",\n  \"الرياضة تصفي الذهن وتقوي البدن\",\n  \"كل يوم هو فرصة لتكون أفضل\",\n  \"التواصل الاجتماعي جزء من نجاحك المهني\",\n  \"العادات الصغيرة تبني حياة عظيمة\",\n  \"لا تستسلم، فكل مجهود له ثماره\",\n  \"اجعل حياتك منظمة تعش بسعادة\"\n];\n\nconst quote = quotes[Math.floor(Math.random() * quotes.length)];\n\n// تحديد اسم اليوم\nconst days = [\"الاثنين\", \"الثلاثاء\", \"الأربعاء\", \"الخميس\", \"الجمعة\", \"السبت\", \"الأحد\"];\nconst dayName = days[counter];\n\nreturn {\n  task: currentTask,\n  quote: quote,\n  day: dayName,\n  counter: counter\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        0
+      ],
+      "id": "95ceff9b-1e9a-43b5-8aa1-30a3f1fc22dc",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "fb64906c-ca37-4c7a-8aed-862edd2b37cb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2aa7839f37b4c5be337285521714e76b9269fb1a403ff2e88dd8932342edeae0"
+  },
+  "nodeGroups": [],
+  "id": "lvUkccNjTW1ZU8Nt",
+  "tags": []
+}
