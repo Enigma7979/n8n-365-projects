@@ -1,30 +1,31 @@
 # N8N 365 Projects | مكتبة 365 مشروع N8N
 
-مكتبة مفتوحة المصدر لـ 365 مشروع أتمتة باستخدام N8N. كل مشروع جاهز للتحميل والاستيراد.
+An open-source library of 365 N8N automation workflows. Each project is ready to download, import, and customize.
 
-Open-source library of 365 N8N automation workflows. Each project is ready to download and import.
-
----
-
-## قائمة المشاريع | Project List
-
-| # | المشروع | Project | الأدوات |
-|---|--------|---------|---------|
-| 001 | [المنبه الذكي الصباحي](projects/001-Smart-Morning-Notifier/) | Smart Morning Notifier | Telegram, N8N |
-| 002 | قريباً | Coming Soon | - |
+مكتبة مفتوحة المصدر تحتوي على 365 مشروع أتمتة باستخدام N8N. كل مشروع جاهز للتحميل والاستيراد والتخصيص.
 
 ---
 
-## كيفية الاستخدام | How to Use
+## 📂 Project List | قائمة المشاريع
 
-1. ادخل إلى مجلد المشروع.
-2. حمّل ملف JSON.
-3. استورده في N8N.
-4. أضف التوكنات الخاصة بك.
-5. فعل الـ Workflow.
+| # | Project Name | الاسم | Tools | Status |
+|---|--------------|-------|-------|--------|
+| 001 | Smart Morning Notifier | المنبه الذكي الصباحي | Telegram, N8N | ✅ Completed |
 
 ---
 
-## الترخيص | License
+## 🚀 How to Use | كيفية الاستخدام
 
-جميع المشاريع مرخصة تحت MIT Licens
+1. Navigate to the project folder. | ادخل إلى مجلد المشروع.
+2. Download the .json workflow file. | حمّل ملف .json الخاص بالـ Workflow.
+3. Import it into your N8N instance. | استورده في N8N.
+4. Add your own credentials (API keys, tokens). | أضف بيانات الاعتماد الخاصة بك.
+5. Activate the workflow. | فعّل الـ Workflow.
+
+---
+
+## 📜 License | الرخصة
+
+All projects are licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+جميع المشاريع مرخصة تحت MIT License. راجع ملف [LICENSE](LICENSE) للتفاصيل.
