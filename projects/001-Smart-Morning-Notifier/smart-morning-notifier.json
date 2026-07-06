@@ -32,7 +32,8 @@
     },
     {
       "parameters": {
-        "chatId": "245640981",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID
+",
         "text": "=📅 {{ $now.format('YYYY-MM-DD') }} 📌 اليوم: {{ $json.day }}  📋 مهام اليوم: {{ $json.task }}  💬 اقتباس اليوم: {{ $json.quote }}  🚀 بالتوفيق!",
         "additionalFields": {}
       },
