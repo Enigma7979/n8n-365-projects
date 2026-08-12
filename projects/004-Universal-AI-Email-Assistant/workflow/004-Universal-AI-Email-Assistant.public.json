@@ -1,0 +1,1451 @@
+{
+  "name": "004 - Universal AI Email Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "message": "=📧 New Email\n\n👤 From:\n{{ $('Prepare Email Data / Edit Fields').item.json.sender_email }}\n\n📌 Subject:\n{{ $('Prepare Email Data / Edit Fields').item.json.email_subject }}\n\n📝 Summary:\n{{ $json.output.summary }}\n\n🌍 Language:\n{{ $json.output.language }}\n\n🎯 Intent:\n{{ $json.output.intent }}\n\n⚠️ Urgent:\n{{ $json.output.urgent }}\n\n✍️ Suggested Reply:\n\n{{ $json.output.reply }}",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": " ✅ Approve ",
+            "disapproveLabel": "✏️  Edit & Send"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -224,
+        -992
+      ],
+      "id": "fc40d718-8eba-4c37-83e3-ba4ce7f41e30",
+      "name": "Telegram Review/Send message and wait for response"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "aec332cd-ecd5-4716-8ba8-beb599269bbd",
+              "leftValue": "={{ $('Telegram Review/Send message and wait for response').item.json.data.approved }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        144,
+        -992
+      ],
+      "id": "698982f4-017c-4796-af29-4baaefc7dadf",
+      "name": "Approval Decision / If"
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@studyua.org",
+        "toEmail": "={{ $('Prepare Email Data / Edit Fields').item.json.sender_email }}",
+        "subject": "=Re: {{ $('Prepare Email Data / Edit Fields').item.json.email_subject }}",
+        "html": "=\n{{\n(() => {\n  let reply = $('Generate AI Reply / Basic LLM Chain').item.json.output.reply || '';\n\n  // إزالة أي توقيع أو بيانات وهمية يولدها الذكاء الاصطناعي\n  reply = reply\n    .replace(/Best regards,[\\s\\S]*$/i, '')\n    .replace(/Kind regards,[\\s\\S]*$/i, '')\n    .replace(/Sincerely,[\\s\\S]*$/i, '')\n    .replace(/\\[Your Name\\]/gi, '')\n    .replace(/\\[Your Position\\]/gi, '')\n    .replace(/\\[Your Company[^\\]]*\\]/gi, '')\n    .replace(/\\[Company Name\\]/gi, '')\n    .replace(/\\[Company Email\\]/gi, '')\n    .replace(/\\[Company Phone\\]/gi, '')\n    .replace(/\\+48[\\d\\s]+/g, '')\n    .replace(/\\+38\\s*732\\s*21\\s*12\\s*01/g, '')\n    .trim();\n\n  // تنسيق الفقرات والقوائم\n  reply = reply\n    .replace(/\\r\\n/g, '\\n')\n    .replace(/\\n{2,}/g, '</p><p style=\"margin:0 0 18px;\">')\n    .replace(/\\n/g, '<br>');\n\n  return `\n<div style=\"margin:0;padding:22px 10px;background:#f4f6f9;font-family:Arial,Helvetica,sans-serif;color:#1f2937;\">\n  <table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n    <tr>\n      <td align=\"center\">\n\n        <table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\"\n          style=\"max-width:680px;background:#ffffff;border:1px solid #dfe4ea;border-radius:10px;overflow:hidden;\">\n\n          <tr>\n            <td style=\"height:7px;background:#173b72;font-size:0;\">&nbsp;</td>\n          </tr>\n\n          <tr>\n            <td style=\"padding:28px 30px;text-align:center;background:#ffffff;border-bottom:4px solid #ed1c24;\">\n\n              <div style=\"font-family:Arial Black,Arial,Helvetica,sans-serif;font-weight:900;line-height:1;\">\n                <span style=\"font-size:34px;color:#222222;letter-spacing:-1px;\">STUDY</span>\n                <span style=\"font-size:34px;color:#ed1c24;letter-spacing:-1px;\">UA</span>\n                <span style=\"font-size:29px;color:#222222;letter-spacing:-1px;\"> PLUS COMPANY</span>\n              </div>\n\n              <div style=\"margin-top:8px;font-size:17px;font-weight:700;color:#222222;\">\n                your way abroad\n              </div>\n            </td>\n          </tr>\n\n          <tr>\n            <td style=\"padding:32px 34px 18px;\">\n\n              <div style=\"font-size:25px;line-height:1.25;font-weight:800;color:#173b72;margin-bottom:24px;\">\n                Thank you for contacting Study UA Plus\n              </div>\n\n              <div style=\"font-size:16px;line-height:1.75;color:#273142;\">\n                <p style=\"margin:0 0 18px;\">${reply}</p>\n\n                <p style=\"margin:28px 0 4px;\">Best regards,</p>\n                <p style=\"margin:0;font-weight:700;color:#173b72;\">Study UA Plus Team</p>\n                <p style=\"margin:4px 0 0;color:#667085;\">International Admissions Team</p>\n              </div>\n\n            </td>\n          </tr>\n\n          <tr>\n            <td style=\"padding:0 34px 30px;\">\n              <table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"padding-right:10px;padding-bottom:8px;\">\n                    <a href=\"https://www.studyua.org\"\n                      style=\"display:inline-block;padding:11px 18px;background:#173b72;color:#ffffff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:700;\">\n                      Visit our website\n                    </a>\n                  </td>\n\n                  <td style=\"padding-bottom:8px;\">\n                    <a href=\"mailto:info@studyua.org\"\n                      style=\"display:inline-block;padding:11px 18px;background:#ed1c24;color:#ffffff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:700;\">\n                      Reply by email\n                    </a>\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <tr>\n            <td style=\"padding:24px 34px;background:#f8fafc;border-top:1px solid #e1e6ec;\">\n              <div style=\"font-size:17px;font-weight:800;color:#173b72;margin-bottom:13px;\">\n                Study UA Plus – Your Way Abroad\n              </div>\n\n              <div style=\"font-size:14px;line-height:1.9;color:#475467;\">\n\n<strong>Website:</strong>\n                <a href=\"https://www.studyua.org\" style=\"color:#173b72;\">\n                  www.studyua.org\n                </a><br>\n\n                <strong>Email:</strong>\n                <a href=\"mailto:info@studyua.org\" style=\"color:#173b72;\">\n                  info@studyua.org\n                </a><br>\n\n                <strong>Belgium:</strong>\n                <a href=\"tel:+32467685250\" style=\"color:#173b72;\">\n                  +32 467 68 52 50\n                </a><br>\n\n                <strong>Ukraine:</strong>\n                <a href=\"tel:+380637171771\" style=\"color:#173b72;\">\n                  +380 63 717 1771\n                </a>\n              </div>\n            </td>\n          </tr>\n\n          <tr>\n            <td style=\"padding:14px 20px;background:#173b72;text-align:center;color:#ffffff;font-size:12px;\">\n              Study UA Plus – Your Way Abroad\n            </td>\n          </tr>\n\n        </table>\n      </td>\n    </tr>\n  </table>\n</div>\n`;\n})()\n}}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        160,
+        -720
+      ],
+      "id": "cfb3cd41-db09-497f-a3f7-82d90514211a",
+      "name": "Send Approved Reply / Send an Email"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "message": "✏️ The suggested reply was rejected.\n\nPlease write the corrected complete reply below.\n\nYou may change the text, add missing information, or rewrite the entire reply.",
+        "responseType": "freeText",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        144,
+        -464
+      ],
+      "id": "dd3f1ed9-a458-489b-a113-3dca1ceb0bf6",
+      "name": "Request Manual Edit / Send message and wait for response1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are the AI Email Assistant for Study UA Plus.\n\nStudy UA Plus provides:\n- University admissions\n- Work contracts\n- Student consulting\n- Visa guidance\n- International education services\n\nYour task is to analyze every incoming email before generating a reply.\n\nAlways return structured output matching the Output Parser exactly.\n\n--------------------------------------------------\nSUPPORTED LANGUAGES\n--------------------------------------------------\n\nDetect the main language of the sender.\n\nSupported languages:\n- Arabic\n- English\n- French\n- Russian\n- Ukrainian\n- Dutch\n\nIf the subject and body use different languages, detect the main language from the email body.\n\n--------------------------------------------------\nEMAIL CATEGORY\n--------------------------------------------------\n\nReturn ONLY one of these values:\n\nstudy_client\nwork_contract_client\nexisting_client\neducation_partnership\nbusiness_service_offer\nadministrative\nspam_unimportant\nother\n\nCategory rules:\n\nstudy_client\nQuestions about universities, admissions, scholarships, language courses, student visas, tuition, accommodation, or studying abroad.\n\nwork_contract_client\nQuestions about jobs, work permits, employment, contracts, recruitment, or migration for work.\n\nexisting_client\nA current customer asking about an existing application, payment, document, case, or previous communication.\n\neducation_partnership\nUniversities, colleges, schools, educational institutions, or educational partnership proposals.\n\nbusiness_service_offer\nCompanies offering marketing, advertising, website development, CRM, software, AI, SEO, accounting, payment systems, or other business services.\nAlso classify as business_service_offer any private company offering complementary services such as student insurance, accommodation, airport transfers, payment solutions, logistics, software, CRM, AI tools, marketing, or operational services, even if those services are related to students. Do not classify these companies as education_partnership.\nadministrative\nInvoices, legal documents, banking, accounting, official administration, internal communication, or formal notices.\n\nspam_unimportant\nAdvertisements, newsletters, promotions, scams, phishing, irrelevant messages, or obvious spam.\n\nother\nAnything that does not fit the categories above.\n\nIMPORTANT:\n\nIf an email is an unsolicited marketing or sales offer, including SEO services, website traffic, advertising, social media promotion, lead generation, CRM software promotion, AI tools promotion, or any commercial service that Study UA Plus did not request, classify it as:\n\nCategory: spam_unimportant\n\nDo NOT classify these emails as business_service_offer.\n\nOnly use business_service_offer when the sender is genuinely contacting Study UA Plus to discuss a business partnership or a service that requires a real business conversation.\n--------------------------------------------------\nSENDER TYPE\n--------------------------------------------------\n\nReturn ONLY one value:\n\npotential_client\nexisting_client\nuniversity\neducational_institution\nrecruitment_company\nservice_provider\ngovernment\nunknown\n\nRules:\n\npotential_client\n- Any individual contacting Study UA Plus for the first time about studying abroad.\n- Any individual asking about universities, admissions, scholarships, language courses, tuition, accommodation, visas, or student services.\n- Any individual asking about work contracts, jobs, recruitment, employment, work permits, or migration.\n- If the sender is clearly a person interested in Study UA Plus services and there is no evidence they are already a client, always return potential_client.\n\nexisting_client\n- The sender refers to an existing application, previous conversation, payment, invoice, case, file number, submitted documents, or ongoing service.\n\nuniversity\n- Official university representative.\n\neducational_institution\n- School, college, educational organisation, training centre, or academy.\n\nrecruitment_company\n- Recruitment agency, HR company, employer, staffing company, or employment agency.\n\nservice_provider\n- Company offering software, CRM, AI, accounting, legal, marketing, advertising, payment services, or another business service.\n\ngovernment\n- Embassy, ministry, immigration office, municipality, tax authority, or other official government body.\n\nunknown\n- Use ONLY if there is not enough information to identify the sender.\n--------------------------------------------------\nINTENT\n--------------------------------------------------\n\nWrite one short sentence explaining exactly what the sender wants.\n\n--------------------------------------------------\nPRIORITY\n--------------------------------------------------\n\nReturn ONLY one value:\n\nhigh\nmedium\nlow\n\nIMPORTANT:\nPriority represents BUSINESS IMPORTANCE to Study UA Plus.\nPriority is NOT the same as urgency.\n\nHIGH PRIORITY:\n- Any new potential client asking about studying abroad, university admission, scholarships, student visa assistance, accommodation, tuition, or admission services.\n- Any new potential client asking about jobs, work contracts, work permits, recruitment, or employment abroad.\n- Any existing client with an important case, payment issue, document issue, admission issue, visa issue, contract issue, complaint, or problem requiring attention.\n- Any request that can directly lead to a paying client or significant business opportunity.\n- Important official or administrative requests requiring company action.\n- Urgent requests from real clients.\n\nMEDIUM PRIORITY:\n- University partnership proposals.\n- Educational institution partnership requests.\n- Recruitment company cooperation proposals.\n- Serious B2B partnership discussions.\n- Non-urgent administrative communication.\n- General follow-up from an existing client that does not involve an immediate problem.\n\nLOW PRIORITY:\n- Unsolicited service offers.\n- SEO offers.\n- Website development offers.\n- Marketing services.\n- Advertising.\n- CRM or software sales pitches.\n- Lead-generation offers.\n- Newsletters.\n- Promotions.\n- General information with no direct business value.\n- spam_unimportant emails.\n\nSPECIAL RULE:\nA new study_client or work_contract_client must normally be HIGH priority because they represent a potential paying client.\n\nA genuine education_partnership or recruitment partnership should normally be MEDIUM unless there is a major urgent business opportunity.\n\nspam_unimportant must always be LOW.\n\n--------------------------------------------------\nURGENT\n--------------------------------------------------\n\nReturn true or false.\n\n--------------------------------------------------\nREQUIRES REPLY\n--------------------------------------------------\n\nReturn true or false.\n\nReturn false only if the email is:\n- Spam\n- Advertisement\n- Newsletter\n- Scam\n- Irrelevant\n- Clearly does not require a response\n\n--------------------------------------------------\nFOLLOW UP\n--------------------------------------------------\n\nReturn true or false.\n\nReturn true only if the email continues an existing conversation or refers to a previous application, payment, document, case, or message.\n\n--------------------------------------------------\nSUMMARY\n--------------------------------------------------\n\nWrite a professional summary in one or two sentences.\n\n--------------------------------------------------\nIMPORTANT ACCURACY RULES\n--------------------------------------------------\n\nNever invent facts.\n\nNever invent prices.\n\nNever invent processing times.\n\nNever invent visa requirements.\n\nNever invent university requirements.\n\nNever invent work-permit requirements.\n\nNever promise admission, employment, visa approval, or unavailable services.\n\nNever assume information that is not contained in the email.\n\nOnly use:\n- Information explicitly written in the email\n- Confirmed information about Study UA Plus\n\nIf important information is missing, ask the sender to provide it.\n\nWhen uncertain, ask questions instead of making assumptions.\n\nATTACHMENT HANDLING RULES:\n\nThe email body may contain extracted text from an attached PDF, XLSX, or other supported file.\n\nYou MUST treat extracted attachment content as part of the sender's message.\n\nBefore asking the sender for any information:\n1. Check the email body.\n2. Check all extracted attachment content.\n3. Use any information already available there.\n4. NEVER ask the sender to provide information that is already present in the email or attachment.\n\nFor study_client inquiries, first identify any available:\n- applicant name\n- age\n- nationality\n- country of residence\n- desired study destination\n- requested program\n- study level\n- previous education\n- graduation year\n- grades or GPA\n- language level or certificate\n- preferred intake\n- visa assistance requirement\n- accommodation requirement\n- budget\n- reference/application code\n\nOnly ask for fields that are genuinely missing.\n\nIf enough information is already available to respond meaningfully, do not ask unnecessary questions.\n\nWhen an attachment contains structured information such as Excel rows or PDF form data, consolidate all relevant information before generating the summary and reply.\n--------------------------------------------------\nREPLY RULES FOR STUDY CLIENTS\n--------------------------------------------------\n\nIf category is study_client, review whether the sender provided the following information:\n\n- Nationality\n- Age\n- Current country of residence\n- Highest completed education\n- Graduation year\n- Grades or academic average, if available\n- Desired country of study\n- Desired field or programme\n- Desired study level:\n  Bachelor\n  Master\n  PhD\n  Language course\n  Other\n- Preferred start date or intake\n- Language level or certificate, if available\n- Whether visa assistance is needed\n- Whether accommodation assistance is needed\n- Approximate budget, only when relevant\n\nDo not ask again for information already provided.\n\nAsk only for the important missing information needed to understand the case.\n\nNationality and age are essential for a new study inquiry. If either is missing, ask for it.\n\nDo not provide specific admission eligibility, prices, deadlines, or visa advice before enough information is available.\n\n--------------------------------------------------\nREPLY RULES FOR WORK-CONTRACT CLIENTS\n--------------------------------------------------\n\nIf category is work_contract_client, review whether the sender provided:\n\n- Nationality\n- Age\n- Current country of residence\n- Current profession\n- Work experience\n- Type of job requested\n- Preferred destination country\n- Valid passport status\n- Language skills\n- Previous work experience in Europe, if any\n- Earliest possible travel or start date\n\nDo not ask again for information already provided.\n\nAsk only for the important missing information.\n\nNationality and age are essential for a new work-contract inquiry. If either is missing, ask for it.\n\nDo not provide prices, processing times, document lists, guarantees, or legal advice unless this information is explicitly confirmed.\n\n--------------------------------------------------\nREPLY RULES FOR OTHER CATEGORIES\n--------------------------------------------------\n\nexisting_client:\nAcknowledge the existing case and request only the specific missing reference, document, payment detail, or case information required.\n\neducation_partnership:\nThank the institution and ask for relevant partnership details, organisation information, proposed cooperation, countries, programmes, expected responsibilities, and preferred meeting time when missing.\n\nbusiness_service_offer:\nAcknowledge the proposal briefly and ask for a company profile, exact service, pricing proposal, portfolio, references, and expected benefits only if the offer may be relevant.\n\nadministrative:\nRespond formally and request clarification or the required document only when necessary.\n\nspam_unimportant:\nSet requires_reply to false.\nKeep reply empty.\n\nother:\nReply politely and ask for clarification when the sender’s request is unclear.\n\n--------------------------------------------------\nREPLY\n--------------------------------------------------\n\nWrite a professional reply in exactly the same language as the sender.\n\nRules:\n- Reply only in the detected language.\n- Be polite, concise, and business-like.\n- Never invent information.\n- Ask only for missing information.\n- Do not repeat questions whose answers are already in the email.\n- Mention Study UA Plus naturally.\n- End with a professional closing.\n- Do not include phone numbers, website, email address, or a full signature block because the professional HTML signature is added later by the workflow.\n- Use only a simple closing such as:\n  Best regards,\n  Study UA Plus Team\n\nUse the equivalent closing in the sender’s language.\n\n--------------------------------------------------\nEMAIL TO ANALYZE\n--------------------------------------------------\n\nSubject:\n{{ $json.email_subject }}\n\nFrom:\n{{ $json.sender_email }}\n\nBody:\n{{ $json.email_body }}\n\n--------------------------------------------------\nFINAL INSTRUCTIONS\n--------------------------------------------------\n\nUse the Subject and Body above as the only source for analyzing the sender’s request.\n\nIf the email body is not empty:\n- Never say that no email content was provided.\n- Never request the sender to resend the email content.\n- Detect the correct language.\n- Classify the email correctly.\n- Generate the reply in the same language as the sender.\n\nReturn ONLY the structured output required by the Output Parser.\n\nDo not return Markdown.\n\nDo not add explanations.\n\nDo not wrap the output in code blocks.\n\nDo not add any text outside the structured output.",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -768,
+        -976
+      ],
+      "id": "446b6fd3-b413-4f86-a9da-7f413db5441f",
+      "name": "Generate AI Reply / Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2fd01517-5668-4f81-be08-24a943f1c720",
+              "name": "email_body",
+              "value": "={{\n  [\n    $('Receive New Email / Email Trigger (IMAP)').item.json.textPlain ||\n    $('Receive New Email / Email Trigger (IMAP)').item.json.text ||\n    '',\n    \n    $json.text ||\n    $json.data ||\n    $json.content ||\n    ''\n  ]\n  .filter(v => v && String(v).trim())\n  .join('\\n\\n--- ATTACHMENT CONTENT ---\\n\\n')\n}}",
+              "type": "string"
+            },
+            {
+              "id": "9b550bb4-945f-433a-8943-f241910ebb0d",
+              "name": "sender_email",
+              "value": "={{ $('Receive New Email / Email Trigger (IMAP)').item.json.metadata?.['return-path'] || $('Receive New Email / Email Trigger (IMAP)').item.json.from?.value?.[0]?.address || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "1177703d-00fc-49b5-873b-d7aa27e68ab7",
+              "name": "email_subject",
+              "value": "={{ $('Receive New Email / Email Trigger (IMAP)').item.json.subject || '(No subject)' }}",
+              "type": "string"
+            },
+            {
+              "id": "29f740dc-b48f-4ce3-a602-ddd52a601287",
+              "name": "received_date",
+              "value": "={{ $now.setZone('Europe/Brussels').toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -944,
+        -976
+      ],
+      "id": "0771be10-0361-4e42-8feb-848611f0dc0d",
+      "name": "Prepare Email Data / Edit Fields"
+    },
+    {
+      "parameters": {
+        "format": "resolved",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2.1,
+      "position": [
+        -2272,
+        -912
+      ],
+      "id": "79ee3e12-458d-493c-86a0-e9c17ef4b8a4",
+      "name": "Receive New Email / Email Trigger (IMAP)"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -960,
+        -736
+      ],
+      "id": "89ae4c29-ddb6-4080-b34f-d83e09940575",
+      "name": "AI Model - Groq / Groq Chat Model"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"summary\": \"Short professional summary of the email in one or two sentences.\",\n  \"language\": \"English\",\n  \"category\": \"study_client\",\n  \"sender_type\": \"potential_client\",\n  \"intent\": \"One short sentence explaining exactly what the sender wants.\",\n  \"priority\": \"medium\",\n  \"urgent\": false,\n  \"requires_reply\": true,\n  \"is_follow_up\": false,\n  \"reply\": \"Professional reply in exactly the same language as the sender.\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -768,
+        -736
+      ],
+      "id": "c187f1a2-001f-445c-b18d-0aae693d0e57",
+      "name": "Structured Output Parser / AI Response Parser"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5b1efb15-7e0b-4f26-adb1-035d100d04ed",
+              "leftValue": "={{ $json.output.requires_reply }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "e0841ae1-3098-4b4d-a6be-6d2a2ffb9903",
+              "leftValue": "={{ $json.output.category }}",
+              "rightValue": "spam_unimportant",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -448,
+        -976
+      ],
+      "id": "5ad9e90a-c18b-4f58-aabd-5ed40c54bb0d",
+      "name": "should Request Review / If"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "CRM v2",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Received Date": "={{ $('Prepare Email Data / Edit Fields').first().json.received_date }}",
+            "Sender Name": "={{ $('Receive New Email / Email Trigger (IMAP)').first().json.from?.value?.[0]?.name || $('Prepare Email Data / Edit Fields').first().json.sender_email.split('@')[0] }}",
+            "Sender Email": "={{ $('Prepare Email Data / Edit Fields').first().json.sender_email }}",
+            "Subject": "={{ $('Prepare Email Data / Edit Fields').first().json.email_subject }}",
+            "Language": "={{ $('Generate AI Reply / Basic LLM Chain').first().json.output.language }}",
+            "Category": "={{ $('Generate AI Reply / Basic LLM Chain').first().json.output.category }}",
+            "Sender Type": "={{ $('Generate AI Reply / Basic LLM Chain').first().json.output.sender_type }}",
+            "Intent": "={{ $('Generate AI Reply / Basic LLM Chain').first().json.output.intent }}",
+            "Summary": "={{ $('Generate AI Reply / Basic LLM Chain').first().json.output.summary }}",
+            "Priority": "={{ $('Generate AI Reply / Basic LLM Chain').first().json.output.priority }}",
+            "Original Email": "={{ $('Prepare Email Data / Edit Fields').first().json.email_body }}",
+            "Status": "Pending Approval",
+            "Message ID": "={{ $('Receive New Email / Email Trigger (IMAP)').item.json.messageId || $('Receive New Email / Email Trigger (IMAP)').item.json.headers?.['message-id'] || $('Receive New Email / Email Trigger (IMAP)').item.json.headers?.['Message-ID'] || '' }}",
+            "Action Required ": "Review AI Draft",
+            "AI Draft": "={{ $('Generate AI Reply / Basic LLM Chain').first().json.output.reply }}",
+            "Notes": "Waiting for approval"
+          },
+          "matchingColumns": [
+            "Received Date"
+          ],
+          "schema": [
+            {
+              "id": "Received Date",
+              "displayName": "Received Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Message ID",
+              "displayName": "Message ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Sender Name",
+              "displayName": "Sender Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Sender Email",
+              "displayName": "Sender Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Subject",
+              "displayName": "Subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Language",
+              "displayName": "Language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Sender Type",
+              "displayName": "Sender Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Action Required ",
+              "displayName": "Action Required ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Intent",
+              "displayName": "Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Original Email",
+              "displayName": "Original Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "AI Draft",
+              "displayName": "AI Draft",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Final Reply",
+              "displayName": "Final Reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -32,
+        -992
+      ],
+      "id": "bfd0b095-78de-438f-b2b7-d2694ee573e9",
+      "name": "Log Pending Review / Append row in sheet"
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@studyua.org",
+        "toEmail": "={{ $('Prepare Email Data / Edit Fields').item.json.sender_email }}",
+        "subject": "=Re: {{ $('Prepare Email Data / Edit Fields').item.json.email_subject }}",
+        "html": "={{\n(() => {\n  let reply = $('Prepare Edited Reply / Edit Fields').item.json.reply || '';\n\n  // Remove signatures and placeholder information from the edited reply\n  reply = reply\n    .replace(/Best regards,[\\s\\S]*$/i, '')\n    .replace(/Kind regards,[\\s\\S]*$/i, '')\n    .replace(/Sincerely,[\\s\\S]*$/i, '')\n    .replace(/\\[Your Name\\]/gi, '')\n    .replace(/\\[Your Position\\]/gi, '')\n    .replace(/\\[Your Company[^\\]]*\\]/gi, '')\n    .replace(/\\[Company Name\\]/gi, '')\n    .replace(/\\[Company Email\\]/gi, '')\n    .replace(/\\[Company Phone\\]/gi, '')\n    .trim();\n\n  // Format paragraphs and line breaks\n  reply = reply\n    .replace(/\\r\\n/g, '\\n')\n    .replace(/\\n{2,}/g, '</p><p style=\"margin:0 0 18px;\">')\n    .replace(/\\n/g, '<br>');\n\n  return `\n<div style=\"margin:0;padding:22px 10px;background:#f4f6f9;font-family:Arial,Helvetica,sans-serif;color:#1f2937;\">\n  <table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n    <tr>\n      <td align=\"center\">\n\n        <table role=\"presentation\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\"\n          style=\"max-width:680px;background:#ffffff;border:1px solid #dfe4ea;border-radius:10px;overflow:hidden;\">\n\n          <tr>\n            <td style=\"height:7px;background:#173b72;font-size:0;\">&nbsp;</td>\n          </tr>\n\n          <tr>\n            <td style=\"padding:28px 30px;text-align:center;background:#ffffff;border-bottom:4px solid #ed1c24;\">\n              <div style=\"font-family:Arial Black,Arial,Helvetica,sans-serif;font-weight:900;line-height:1;\">\n                <span style=\"font-size:34px;color:#222222;letter-spacing:-1px;\">STUDY</span>\n                <span style=\"font-size:34px;color:#ed1c24;letter-spacing:-1px;\">UA</span>\n                <span style=\"font-size:29px;color:#222222;letter-spacing:-1px;\"> PLUS COMPANY</span>\n              </div>\n\n              <div style=\"margin-top:8px;font-size:17px;font-weight:700;color:#222222;\">\n                your way abroad\n              </div>\n            </td>\n          </tr>\n\n          <tr>\n            <td style=\"padding:32px 34px 18px;\">\n              <div style=\"font-size:25px;line-height:1.25;font-weight:800;color:#173b72;margin-bottom:24px;\">\n                Thank you for contacting Study UA Plus\n              </div>\n\n              <div style=\"font-size:16px;line-height:1.75;color:#273142;\">\n                <p style=\"margin:0 0 18px;\">${reply}</p>\n\n                <p style=\"margin:28px 0 4px;\">Best regards,</p>\n                <p style=\"margin:0;font-weight:700;color:#173b72;\">Study UA Plus Team</p>\n                <p style=\"margin:4px 0 0;color:#667085;\">International Admissions Team</p>\n              </div>\n            </td>\n          </tr>\n\n          <tr>\n            <td style=\"padding:0 34px 30px;\">\n              <table role=\"presentation\" cellspacing=\"0\" cellpadding=\"0\" border=\"0\">\n                <tr>\n                  <td style=\"padding-right:10px;padding-bottom:8px;\">\n                    <a href=\"https://www.studyua.org\"\n                      style=\"display:inline-block;padding:11px 18px;background:#173b72;color:#ffffff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:700;\">\n                      Visit our website\n                    </a>\n                  </td>\n\n                  <td style=\"padding-bottom:8px;\">\n                    <a href=\"mailto:info@studyua.org\"\n                      style=\"display:inline-block;padding:11px 18px;background:#ed1c24;color:#ffffff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:700;\">\n                      Reply by email\n                    </a>\n                  </td>\n                </tr>\n              </table>\n            </td>\n          </tr>\n\n          <tr>\n            <td style=\"padding:24px 34px;background:#f8fafc;border-top:1px solid #e1e6ec;\">\n              <div style=\"font-size:17px;font-weight:800;color:#173b72;margin-bottom:13px;\">\n                Study UA Plus – Your Way Abroad\n              </div>\n\n              <div style=\"font-size:14px;line-height:1.9;color:#475467;\">\n                <strong>Website:</strong>\n                <a href=\"https://www.studyua.org\" style=\"color:#173b72;\">\n                  www.studyua.org\n                </a><br>\n\n                <strong>Email:</strong>\n                <a href=\"mailto:info@studyua.org\" style=\"color:#173b72;\">\n                  info@studyua.org\n                </a><br>\n\n                <strong>Belgium:</strong>\n                <a href=\"tel:+32467685250\" style=\"color:#173b72;\">\n                  +32 467 68 52 50\n                </a><br>\n\n                <strong>Ukraine:</strong>\n                <a href=\"tel:+380637171771\" style=\"color:#173b72;\">\n                  +380 63 717 1771\n                </a>\n              </div>\n            </td>\n          </tr>\n\n          <tr>\n            <td style=\"padding:14px 20px;background:#173b72;text-align:center;color:#ffffff;font-size:12px;\">\n              Study UA Plus – Your Way Abroad\n            </td>\n          </tr>\n\n        </table>\n      </td>\n    </tr>\n  </table>\n</div>\n`;\n})()\n}}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        640,
+        -464
+      ],
+      "id": "d3d557d9-2c1c-463e-aee5-4e92352b4a8f",
+      "name": "Send Edited Repl / Send an Email"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "CRM v2",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Edited & Sent",
+            "Action Required ": "Completed",
+            "Notes": "Edited and sent",
+            "Final Reply": "={{ $('Prepare Edited Reply / Edit Fields').item.json.reply }}",
+            "Received Date": "={{ $('Prepare Email Data / Edit Fields').first().json.received_date }}"
+          },
+          "matchingColumns": [
+            "Received Date"
+          ],
+          "schema": [
+            {
+              "id": "Received Date",
+              "displayName": "Received Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Message ID",
+              "displayName": "Message ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Sender Name",
+              "displayName": "Sender Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Sender Email",
+              "displayName": "Sender Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Subject",
+              "displayName": "Subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Language",
+              "displayName": "Language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Sender Type",
+              "displayName": "Sender Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Action Required ",
+              "displayName": "Action Required ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Intent",
+              "displayName": "Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Original Email",
+              "displayName": "Original Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "AI Draft",
+              "displayName": "AI Draft",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Final Reply",
+              "displayName": "Final Reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        864,
+        -464
+      ],
+      "id": "c27c354d-3e91-4788-accf-62295df51184",
+      "name": "Update Edited Reply / Update row in sheet"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1f45a3d6-23ad-47c6-af37-a8238f560453",
+              "name": "reply",
+              "value": "=\n{{ $json.data.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        368,
+        -464
+      ],
+      "id": "41087589-400f-4b85-801a-4d3443bce6c2",
+      "name": "Prepare Edited Reply / Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "CRM v2",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "Approved & Sent",
+            "Action Required ": "Completed",
+            "Final Reply": "={{ $('Generate AI Reply / Basic LLM Chain').first().json.output.reply }}",
+            "Notes": "Approved and sent",
+            "Received Date": "={{ $('Prepare Email Data / Edit Fields').first().json.received_date }}"
+          },
+          "matchingColumns": [
+            "Received Date"
+          ],
+          "schema": [
+            {
+              "id": "Received Date",
+              "displayName": "Received Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Message ID",
+              "displayName": "Message ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Sender Name",
+              "displayName": "Sender Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Sender Email",
+              "displayName": "Sender Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Subject",
+              "displayName": "Subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Language",
+              "displayName": "Language",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Sender Type",
+              "displayName": "Sender Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Action Required ",
+              "displayName": "Action Required ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Intent",
+              "displayName": "Intent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Original Email",
+              "displayName": "Original Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "AI Draft",
+              "displayName": "AI Draft",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Final Reply",
+              "displayName": "Final Reply",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        368,
+        -720
+      ],
+      "id": "2e8fd027-1cae-44d6-afcf-7d33a77fa408",
+      "name": "Update Approved Status / Update row in sheet"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "attachment_0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -1504,
+        -1904
+      ],
+      "id": "4dd682aa-f9a5-48bf-996b-2250074b7290",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $binary.attachment_0.mimeType }}",
+                    "rightValue": "application/pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "781235f4-d04c-427b-bb0f-b662f3527a84"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PDF"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c6e6ff5f-9be1-4b09-b2b2-cccf0dc6e30f",
+                    "leftValue": "={{ $binary.attachment_0.mimeType }}",
+                    "rightValue": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "WORD"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "04e31fac-6dbd-454c-b0bc-34be909cbd90",
+                    "leftValue": "={{ $binary.attachment_0.mimeType }}",
+                    "rightValue": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "EXCEL"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0effde4a-e276-4071-94dd-afd746522aa8",
+                    "leftValue": "={{ $binary.attachment_0.mimeType }}",
+                    "rightValue": "image/",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "IMAGE"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -2048,
+        -960
+      ],
+      "id": "b3203519-3c9a-4b2b-b47e-69704dba24cd",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "binaryPropertyName": "attachment_0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -1568,
+        -1408
+      ],
+      "id": "45ec6065-b3b3-4d66-a405-515205b0fe9a",
+      "name": "Extract from File1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst text = items\n  .map((item, index) => {\n    const row = item.json;\n\n    const rowText = Object.entries(row)\n      .map(([key, value]) => `${key}: ${value ?? ''}`)\n      .join('\\n');\n\n    return `Row ${index + 1}\\n${rowText}`;\n  })\n  .join('\\n\\n');\n\nreturn [\n  {\n    json: {\n      text\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1408,
+        -1408
+      ],
+      "id": "95f1e6f2-4245-4bc8-b7ec-3dd4e54451cf",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "const mammoth = require('mammoth');\n\nconst items = $input.all();\nconst output = [];\n\nfor (let i = 0; i < items.length; i++) {\n  const buffer = await this.helpers.getBinaryDataBuffer(\n    i,\n    'attachment_0'\n  );\n\n  const result = await mammoth.extractRawText({ buffer });\n\n  output.push({\n    json: {\n      ...items[i].json,\n      text: result.value.trim(),\n      attachment_type: 'word',\n      attachment_name:\n        items[i].binary?.attachment_0?.fileName || 'document.docx'\n    }\n  });\n}\n\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1520,
+        -1680
+      ],
+      "id": "a628a186-5b74-4ca5-a666-db2406176a0a",
+      "name": "Extract Word DOCX / Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"qwen/qwen3.6-27b\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"Analyze this image as an email attachment for Study UA Plus. Extract all visible and relevant information accurately. Include names, dates, nationality, age, education, university, programme, country, reference numbers, document type, and any other important details. Do not invent anything. Return plain text only.\"\n        },\n        {\n          \"type\": \"image_url\",\n          \"image_url\": {\n            \"url\": \"data:{{$json.image_mime_type}};base64,{{$json.image_base64}}\"\n          }\n        }\n      ]\n    }\n  ],\n  \"temperature\": 0\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -1472,
+        -1136
+      ],
+      "id": "89f26fd6-e3c5-4991-abe9-c1b4d8347d04",
+      "name": "Analyze Image with Groq Vision / HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nfor (let i = 0; i < items.length; i++) {\n  const buffer = await this.helpers.getBinaryDataBuffer(i, 'attachment_0');\n\n  const mimeType =\n    items[i].binary?.attachment_0?.mimeType || 'image/jpeg';\n\n  items[i].json.image_base64 = buffer.toString('base64');\n  items[i].json.image_mime_type = mimeType;\n}\n\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1664,
+        -1136
+      ],
+      "id": "393f5b1a-4b36-44b4-a324-91867c14448d",
+      "name": "Prepare Image Base64 / Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => ({\n  json: {\n    ...item.json,\n    text: item.json.choices?.[0]?.message?.content || ''\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1280,
+        -1136
+      ],
+      "id": "d245d472-514e-4515-8b49-4390d2be13b1",
+      "name": "Prepare Image Text / Code in JavaScript1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Review/Send message and wait for response": {
+      "main": [
+        [
+          {
+            "node": "Log Pending Review / Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approval Decision / If": {
+      "main": [
+        [
+          {
+            "node": "Send Approved Reply / Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Request Manual Edit / Send message and wait for response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request Manual Edit / Send message and wait for response1": {
+      "main": [
+        [
+          {
+            "node": "Prepare Edited Reply / Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate AI Reply / Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "should Request Review / If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Email Data / Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Generate AI Reply / Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receive New Email / Email Trigger (IMAP)": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Model - Groq / Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate AI Reply / Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser / AI Response Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Generate AI Reply / Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "should Request Review / If": {
+      "main": [
+        [
+          {
+            "node": "Telegram Review/Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Log Pending Review / Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Approval Decision / If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Approved Reply / Send an Email": {
+      "main": [
+        [
+          {
+            "node": "Update Approved Status / Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Edited Repl / Send an Email": {
+      "main": [
+        [
+          {
+            "node": "Update Edited Reply / Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Edited Reply / Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send Edited Repl / Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Prepare Email Data / Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Word DOCX / Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Image Base64 / Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Email Data / Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Prepare Email Data / Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Word DOCX / Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Prepare Email Data / Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Image with Groq Vision / HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Prepare Image Text / Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Image Base64 / Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Analyze Image with Groq Vision / HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Image Text / Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Prepare Email Data / Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "meta": {},
+  "nodeGroups": [],
+  "tags": []
+}
