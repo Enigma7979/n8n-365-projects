@@ -13,7 +13,7 @@ An open-source library of 365 N8N automation workflows. Each project is ready to
 | 001 | Smart Morning Notifier | المنبه الذكي الصباحي | Telegram, N8N | ✅ Completed |
 | 002 | AI News Digest | ملخص أخبار الذكاء الاصطناعي | Reddit, Groq, Telegram, N8N | ✅ Completed |
 | 003 | Amazon Price Tracker | متتبع أسعار أمازون | Amazon, Telegram, N8N | ✅ Completed |
-
+| 004 | Universal AI Email Assistant | مساعد بريد إلكتروني ذكي | n8n, Groq, Telegram, Google Sheets, IMAP, SMTP | ✅ Completed |
 ---
 
 ## 🚀 How to Use | كيفية الاستخدام
