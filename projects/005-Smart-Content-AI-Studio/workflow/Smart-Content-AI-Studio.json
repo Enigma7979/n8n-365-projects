@@ -1,0 +1,148 @@
+{
+  "name": "005 - Smart Content AI Studio (Telegram + Groq)",
+  "nodes": [
+    {
+      "id": "f2636d4f-e8a0-4fcb-9bfd-d0643a5bede8",
+      "name": "Generate 3 Reel Ideas",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        464,
+        0
+      ],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.topic }}",
+        "options": {
+          "systemMessage": "You are an Arabic-first content strategist. Generate exactly 3 distinct Instagram Reel ideas for the user's topic. For each include a compelling Arabic hook (up to 9 words), concept, 20-second Arabic script, CTA, and short English caption. Target creators and small businesses. Do not guarantee views or sales."
+        }
+      }
+    },
+    {
+      "id": "6b6050aa-5ae3-4d52-9e40-cdc9b8e77127",
+      "name": "Groq Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        464,
+        240
+      ],
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {
+          "temperature": 0.7
+        }
+      }
+    },
+    {
+      "id": "eef0c23e-26be-41ba-b2bc-9c14c186d79f",
+      "name": "Telegram Incoming Message",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        320
+      ],
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      }
+    },
+    {
+      "id": "524d72c4-dc31-4ec3-a632-5d6c9ea1c95e",
+      "name": "Prepare Telegram Topic",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        320
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "telegram-topic",
+              "name": "topic",
+              "type": "string",
+              "value": "={{ $json.message.text || 'أعطني أفكار محتوى عن الذكاء الاصطناعي' }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "c63de5ed-7ae3-4014-a9ee-1477ea9992c7",
+      "name": "Reply on Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        752,
+        0
+      ],
+      "parameters": {
+        "resource": "message",
+        "operation": "sendMessage",
+        "chatId": "={{ $('Telegram Incoming Message').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate 3 Reel Ideas",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Incoming Message": {
+      "main": [
+        [
+          {
+            "node": "Prepare Telegram Topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Telegram Topic": {
+      "main": [
+        [
+          {
+            "node": "Generate 3 Reel Ideas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate 3 Reel Ideas": {
+      "main": [
+        [
+          {
+            "node": "Reply on Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "pinData": {},
+  "tags": []
+}
