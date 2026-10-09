@@ -26,3 +26,10 @@ Edit the tasks array in the Code node to match your weekly routine. Change quote
 
 ## License
 MIT - Open Source
+
+## Security and setup before activation
+- Create **your own Telegram bot** using [BotFather](https://t.me/BotFather). Configure your own Telegram API credential in n8n and select it in **Send a text message**.
+- Replace `YOUR_TELEGRAM_CHAT_ID` with **your own** Telegram chat ID.
+- Never put your bot token into the public workflow JSON or GitHub. The public template has no preconfigured credentials.
+- If a real token was ever exposed, revoke/rotate it immediately; deleting it from the latest commit does not remove Git history.
+- Confirm your timezone and schedule, and test a message before activation.
