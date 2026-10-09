@@ -24,3 +24,11 @@
 
 ## الحالة
 ✅ مكتمل ومُختبر
+
+## إعداد مفاتيحك الخاصة (إلزامي)
+- احصل على **Groq API Key خاص بك** من [Groq Console](https://console.groq.com/keys). داخل n8n أنشئ **HTTP Header Auth Credential** بالاسم `Authorization` والقيمة `Bearer YOUR_ACTUAL_GROQ_API_KEY` (استبدل النص التوضيحي بمفتاحك الحقيقي داخل n8n فقط)، ثم اختره في عقدة **HTTP Request**.
+- أنشئ بوت Telegram خاصًا بك عبر [BotFather](https://t.me/BotFather)، وأنشئ Telegram API Credential واربطه بعقدة **Send a text message**.
+- استبدل `YOUR_TELEGRAM_CHAT_ID` بمعرّف محادثتك. لا تستخدم بيانات اعتماد مالك المشروع.
+- **ممنوع نشر مفاتيح Groq أو Telegram** في ملف JSON أو GitHub. إذا سبق نشر مفتاح حقيقي، ألغِه وبدّله فورًا.
+- تحقق من توفر نموذج Groq المحدد في إعدادات طلب HTTP قبل التشغيل؛ قد تتغير أسماء النماذج وحدود الخدمة.
+- تم تعديل القالب العام ليستخدم Credential بدل كتابة مفتاح Groq مباشرة داخل Header في JSON.
