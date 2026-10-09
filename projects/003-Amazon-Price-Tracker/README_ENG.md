@@ -29,3 +29,9 @@ An automated n8n workflow that monitors a product's price on Amazon on a schedul
 
 ## Status
 ✅ Completed and tested
+
+## Security and bot setup
+- Create **your own Telegram bot** with [BotFather](https://t.me/BotFather), then configure your own Telegram API credential in n8n for **Send a text message**.
+- Replace `YOUR_TELEGRAM_CHAT_ID` with your own chat ID. This public template provides no shared bot credentials.
+- Never commit a real Telegram bot token to GitHub or workflow JSON. Rotate a token immediately if it was ever exposed.
+- The Amazon product URL is an **example only**. HTML price extraction can break when Amazon changes its markup or blocks automated requests; test the workflow before activation.
