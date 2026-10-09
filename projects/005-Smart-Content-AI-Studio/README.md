@@ -9,6 +9,17 @@ A reusable **Telegram + Groq + n8n** workflow that transforms a content topic in
 - Telegram bot (created using [@BotFather](https://t.me/BotFather))
 - Groq API account (subject to provider usage limits)
 
+## 🔐 Required: use your own Telegram and Groq API credentials
+
+**Before running this public template, every user must create and configure their own credentials:**
+
+1. Create your own Telegram bot via [@BotFather](https://t.me/BotFather), copy **your Telegram bot token**, and configure a **Telegram API credential** in n8n for both **Telegram Incoming Message** and **Reply on Telegram**.
+2. Obtain **your own Groq API key** from [Groq Console](https://console.groq.com/keys), create a **Groq API credential** in n8n, and select it in **Groq Chat Model**.
+3. Never paste actual tokens or keys into the workflow JSON, README, screenshots, or public GitHub commits. The included `.env.example` contains **placeholders only** and is not a credentials file. Do not commit a real `.env` file.
+4. If a real key or token was ever published, **revoke/rotate it immediately**. Removing it from the latest commit is not sufficient because Git history may retain it.
+
+**This repository does not provide shared Telegram or Groq credentials.** Each person must use their own accounts and API keys.
+
 ## Quick setup
 1. Download [the workflow JSON](workflow/Smart-Content-AI-Studio.json).
 2. In n8n, **Import from File** and choose the JSON.
