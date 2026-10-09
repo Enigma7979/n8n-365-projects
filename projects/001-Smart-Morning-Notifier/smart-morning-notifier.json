@@ -32,8 +32,7 @@
     },
     {
       "parameters": {
-        "chatId": "YOUR_TELEGRAM_CHAT_ID
-",
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
         "text": "=📅 {{ $now.format('YYYY-MM-DD') }} 📌 اليوم: {{ $json.day }}  📋 مهام اليوم: {{ $json.task }}  💬 اقتباس اليوم: {{ $json.quote }}  🚀 بالتوفيق!",
         "additionalFields": {}
       },
@@ -44,14 +43,7 @@
         0
       ],
       "id": "40785c7f-5d0b-4cd9-9133-ca4759caae09",
-      "name": "Send a text message",
-      "webhookId": "1dad33dc-0953-49fa-b397-08d4348a909c",
-      "credentials": {
-        "telegramApi": {
-          "id": "YOJ1Xt5IVk62QePx",
-          "name": "Telegram account"
-        }
-      }
+      "name": "Send a text message"
     },
     {
       "parameters": {
@@ -98,12 +90,6 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "fb64906c-ca37-4c7a-8aed-862edd2b37cb",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "2aa7839f37b4c5be337285521714e76b9269fb1a403ff2e88dd8932342edeae0"
-  },
   "nodeGroups": [],
-  "id": "lvUkccNjTW1ZU8Nt",
   "tags": []
 }
