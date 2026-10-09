@@ -24,3 +24,11 @@ An automated n8n workflow that fetches the latest automation & AI news from Redd
 
 ## Status
 ✅ Completed and tested
+
+## Required: configure your own API credentials
+- Get **your own Groq API key** from [Groq Console](https://console.groq.com/keys). In n8n, create an **HTTP Header Auth credential** with name `Authorization` and value `Bearer YOUR_ACTUAL_GROQ_API_KEY` (replace the placeholder with your actual key **inside n8n only**). Select it in **HTTP Request**.
+- Create **your own Telegram bot** with [BotFather](https://t.me/BotFather), add your own Telegram API credential in n8n, and select it in **Send a text message**.
+- Replace `YOUR_TELEGRAM_CHAT_ID` with your own chat ID. No shared Telegram or Groq keys are provided.
+- **Never commit actual tokens or API keys** to workflow JSON or GitHub. Rotate any credential that was previously exposed, including in Git history.
+- Verify the chosen Groq model remains available to your account before activating; model names and provider limits can change.
+- The public workflow now uses an n8n credential instead of an embedded Groq Authorization header.
