@@ -16,11 +16,11 @@ An automated n8n workflow that fetches the latest automation & AI news from Redd
 - Telegram Bot API
 
 ## Setup
-1. Import `workflow.json` into your n8n instance
-2. Replace `YOUR_GROQ_API_KEY_HERE` in the HTTP Request node with your own [Groq API key](https://console.groq.com/keys)
-3. Replace `YOUR_TELEGRAM_CHAT_ID` in the Telegram node with your own chat ID
-4. Connect your own Telegram Bot credential
-5. Activate the workflow
+1. Import `ai-news-digest.json` into n8n.
+2. Create an HTTP Header Auth credential for your own Groq API key and select it in the HTTP Request node (see security section below).
+3. Replace `YOUR_TELEGRAM_CHAT_ID` with your own chat ID.
+4. Connect your own Telegram Bot credential.
+5. Test before activating.
 
 ## Status
 ✅ Completed and tested
