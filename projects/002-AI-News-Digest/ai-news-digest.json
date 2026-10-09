@@ -40,18 +40,14 @@
         "url": "https://api.groq.com/openai/v1/chat/completions",
         "sendHeaders": true,
         "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "Bearer YOUR_GROQ_API_KEY_HERE
-"
-            }
-          ]
+          "parameters": []
         },
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\"model\":\"llama-3.3-70b-versatile\",\"messages\":[{\"role\":\"user\",\"content\":\"لخص العنوان التالي عن الأتمتة والذكاء الاصطناعي بجملة أو جملتين بالعربي: {{ $json.title }}\"}]}\n",
-        "options": {}
+        "options": {},
+        "authentication": "genericCredentialType",
+        "nodeCredentialType": "httpHeaderAuth"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
@@ -75,14 +71,7 @@
         0
       ],
       "id": "b5464eab-8822-4929-b863-9aec2deb1374",
-      "name": "Send a text message",
-      "webhookId": "22bf3d5b-dad0-4647-afa4-41c28ffdca2c",
-      "credentials": {
-        "telegramApi": {
-          "id": "YOJ1Xt5IVk62QePx",
-          "name": "Telegram account"
-        }
-      }
+      "name": "Send a text message"
     },
     {
       "parameters": {
@@ -150,12 +139,6 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "36756a84-1c22-489a-8aec-b853698a4531",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "2aa7839f37b4c5be337285521714e76b9269fb1a403ff2e88dd8932342edeae0"
-  },
   "nodeGroups": [],
-  "id": "8AxRGs1vhOTlkyLA",
   "tags": []
 }
