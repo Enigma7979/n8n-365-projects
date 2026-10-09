@@ -116,3 +116,10 @@ Project **#004** in a hands-on automation portfolio focused on practical, market
 ## License
 
 MIT
+
+## Required: your own accounts and API keys
+- Create **your own Telegram bot** through [BotFather](https://t.me/BotFather), configure your own Telegram API credential in n8n, and replace `YOUR_TELEGRAM_CHAT_ID`.
+- Get **your own Groq API key** from [Groq Console](https://console.groq.com/keys). Configure it in the **Groq model credential** and separately in the **HTTP Header Auth credential** for Groq Vision where required.
+- Configure **your own IMAP, SMTP and Google Sheets OAuth credentials**, and replace the placeholder Google Spreadsheet ID. No working accounts, passwords, or API keys are bundled.
+- Never paste secrets into workflow JSON or public commits. Rotate any exposed key immediately, including if it appeared in Git history.
+- Test all approval, attachment and sending branches with non-sensitive sample messages before production use.
