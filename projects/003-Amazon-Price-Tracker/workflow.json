@@ -90,10 +90,9 @@
     },
     {
       "parameters": {
-        "chatId": "YOUR_TELEGRAM_CHAT_ID","text": "={
-          { $json.message
-          }
-        }","additionalFields": {}
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "={\n          { $json.message\n          }\n        }",
+        "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
@@ -102,14 +101,7 @@
         -144
       ],
       "id": "ec18e8ba-39a8-478e-ae44-0e4017c7919f",
-      "name": "Send a text message",
-      "webhookId": "663ac696-cc5d-455f-b805-fe59fd3e5aaa",
-      "credentials": {
-        "telegramApi": {
-          "id": "U4bJhoX9ppJQAJQU",
-          "name": "Telegram account"
-        }
-      }
+      "name": "Send a text message"
     },
     {
       "parameters": {
@@ -298,12 +290,6 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "8f4f98b8-13cc-4241-92ac-8fb5493ca808",
-  "meta": {
-    "templateCredsSetupCompleted": true,
-    "instanceId": "86faf4a4f0e55a0b98faea99163016ed96ba542059c26f385405885950eb69be"
-  },
   "nodeGroups": [],
-  "id": "YVe1zJNneXYjyVNz",
   "tags": []
 }
