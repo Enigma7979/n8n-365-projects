@@ -119,3 +119,10 @@ Incoming Email
 ## الترخيص
 
 MIT
+
+## مطلوب: حساباتك ومفاتيح API الخاصة بك
+- أنشئ **بوت Telegram خاصًا بك** عبر [BotFather](https://t.me/BotFather)، ثم أنشئ Telegram API Credential داخل n8n واستبدل `YOUR_TELEGRAM_CHAT_ID` بمعرّف محادثتك.
+- احصل على **Groq API Key خاص بك** من [Groq Console](https://console.groq.com/keys)، واربطه بكل من **Groq Chat Model Credential** و**HTTP Header Auth Credential** الخاص بتحليل الصور عند الحاجة.
+- اربط حسابات **IMAP وSMTP وGoogle Sheets OAuth** الخاصة بك، واستبدل معرّف Google Spreadsheet التوضيحي. لا يتضمن المشروع حسابات أو كلمات مرور أو مفاتيح جاهزة.
+- لا تنشر المفاتيح داخل JSON أو GitHub؛ ألغِ أي مفتاح مكشوف وأنشئ غيره، حتى لو حُذف من آخر Commit.
+- اختبر مسارات الموافقة والمرفقات والإرسال باستخدام بيانات تجريبية غير حساسة قبل تشغيله الفعلي.
