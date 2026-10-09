@@ -16,11 +16,11 @@
 - Telegram Bot API
 
 ## طريقة التشغيل
-1. استورد ملف `workflow.json` لحسابك بـ n8n
-2. استبدل `YOUR_GROQ_API_KEY_HERE` بمفتاح Groq الخاص بك
-3. استبدل `YOUR_TELEGRAM_CHAT_ID` برقم الـ Chat ID الخاص بحسابك
-4. اربط الـ Credential الخاص ببوت تيليجرام
-5. فعّل الـ workflow
+1. استورد ملف `ai-news-digest.json` إلى n8n.
+2. أنشئ HTTP Header Auth Credential لمفتاح Groq الخاص بك واربطه بعقدة HTTP Request (راجع قسم الأمان أدناه).
+3. استبدل `YOUR_TELEGRAM_CHAT_ID` بمعرّف محادثتك.
+4. اربط Telegram API Credential الخاص ببوتك.
+5. اختبر سير العمل قبل تفعيله.
 
 ## الحالة
 ✅ مكتمل ومُختبر
