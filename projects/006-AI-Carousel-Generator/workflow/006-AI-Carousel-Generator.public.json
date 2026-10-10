@@ -1,0 +1,256 @@
+{
+  "name": "006 - AI Carousel Generator (Public Template)",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "name": "006 Telegram Topic",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "topic",
+              "name": "topic",
+              "type": "string",
+              "value": "={{ $json.message.text }}"
+            },
+            {
+              "id": "chat",
+              "name": "chatId",
+              "type": "string",
+              "value": "={{ $json.message.chat.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Prepare Topic",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({model:\"allam-2-7b\",messages:[{role:\"system\",content:\"أنت كاتب محتوى عربي محترف متخصص في Instagram Carousel. اكتب سبعة سلايدات بالضبط حول موضوع المستخدم. كل سلايد يتكون من سطر عنوان قصير لا يتجاوز 7 كلمات وسطر شرح لا يتجاوز 14 كلمة. اكتب بالصيغة: سلايد 1: [العنوان] ثم في سطر جديد [الشرح]، وكرر حتى سلايد 7. السلايد الأول هوك قوي، السلايدات 2-6 خطوات عملية مفيدة، السلايد السابع دعوة تفاعل واضحة. تجنب الوعود المبالغ فيها والهاشتاكات والمقدمات والخواتيم والنصوص الطويلة. اللغة عربية واضحة. أرجع السلايدات السبعة فقط.\"},{role:\"user\",content:$('Prepare Topic').first().json.topic}],temperature:0.4}) }}",
+        "options": {}
+      },
+      "name": "Groq - Generate Arabic Carousel Copy",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Prepare Topic').first().json.chatId }}",
+        "text": "={{ '📝 مشروع 006 — مسودة المحتوى\\n\\n' + $json.choices[0].message.content + '\\n\\n🎨 جارٍ إنشاء 7 صور PNG وإرسالها في هذه المحادثة.' }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "name": "Telegram - Review Draft",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = String($input.first().json.choices?.[0]?.message?.content ?? '').replace(/\\\\n/g, '\\n').replace(/\\r/g, '');\nconst lines = raw.split('\\n').map(s => s.trim()).filter(Boolean);\nconst slides = [];\nfor (const line of lines) {\n  const match = line.match(/^(?:ال)?سلايد\\s*([1-7])\\s*[:：-]\\s*(.*)$/i);\n  if (match) {\n    slides.push({number: Number(match[1]), title: match[2].replace(/^(?:العنوان|هوك قوي)\\s*[-:：]\\s*/,'').trim(), body: ''});\n  } else if (slides.length && !slides[slides.length-1].body) {\n    slides[slides.length-1].body = line.replace(/^(?:الشرح|الجملة التوضيحية)\\s*[-:：]\\s*/,'').trim();\n  }\n}\nif (slides.length !== 7 || slides.some((s,i)=>s.number!==i+1 || !s.title)) {\n throw new Error('Expected 7 numbered slides with titles and descriptions; review Groq response before design generation.');\n}\nreturn slides.map(s => ({json:{slideNumber:s.number,title:s.title,body:s.body,width:1080,height:1920,format:'png',topic:$('Prepare Topic').first().json.topic,chatId:$('Prepare Topic').first().json.chatId}}));"
+      },
+      "name": "006 - Split into 7 Slides",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        352,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const item = $input.item.json;\nconst esc = v => String(v ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;');\nconst n = Number(item.slideNumber);\nconst title = esc(item.title);\nconst body = esc(item.body);\nconst topicLabel = esc(String(item.topic ?? \"\").trim().replace(/\\s+/g,\" \").slice(0,48));\nconst svg = `<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1080\" height=\"1920\" viewBox=\"0 0 1080 1920\">\n<defs><linearGradient id=\"bg\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#0B1235\"/><stop offset=\".55\" stop-color=\"#30205E\"/><stop offset=\"1\" stop-color=\"#8C256D\"/></linearGradient></defs>\n<rect width=\"1080\" height=\"1920\" fill=\"url(#bg)\"/>\n<circle cx=\"920\" cy=\"240\" r=\"330\" fill=\"#EC4899\" opacity=\".12\"/>\n<circle cx=\"140\" cy=\"1520\" r=\"350\" fill=\"#38BDF8\" opacity=\".10\"/>\n<rect x=\"70\" y=\"95\" width=\"940\" height=\"1730\" rx=\"55\" fill=\"#FFFFFF\" fill-opacity=\".07\" stroke=\"#FFFFFF\" stroke-opacity=\".20\" stroke-width=\"3\"/>\n<foreignObject x=\"130\" y=\"150\" width=\"800\" height=\"180\"><div xmlns=\"http://www.w3.org/1999/xhtml\" dir=\"rtl\" style=\"font-family:Arial,sans-serif;color:#D8B4FE;text-align:right;font-size:39px;font-weight:700;overflow-wrap:break-word\">${topicLabel}</div></foreignObject>\n<foreignObject x=\"120\" y=\"490\" width=\"840\" height=\"900\"><div xmlns=\"http://www.w3.org/1999/xhtml\" dir=\"rtl\" style=\"font-family:Arial,'Noto Sans Arabic',sans-serif;color:white;text-align:right;overflow-wrap:break-word\"><div style=\"font-size:79px;font-weight:800;line-height:1.45;margin-bottom:75px\">${title}</div><div style=\"font-size:52px;line-height:1.7;color:#E5E7EB\">${body}</div></div></foreignObject>\n<rect x=\"120\" y=\"1660\" width=\"840\" height=\"4\" rx=\"2\" fill=\"#F472B6\"/>\n</svg>`;\nreturn {json:{...item,svg,svgFilename:'006-slide-'+String(n).padStart(2,'0')+'.svg',renderStatus:'SVG source only — PNG conversion not yet connected'}};"
+      },
+      "name": "006 - Build SVG Slide Template",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.CAROUSEL_RENDERER_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({code: 'export default async ({ page, context }) => { await page.setViewport({width:1080,height:1920,deviceScaleFactor:1}); await page.setContent(context.html,{waitUntil:\"load\"}); await new Promise(resolve => setTimeout(resolve,500)); const data=await page.screenshot({type:\"png\",fullPage:false}); return {image:Array.from(data)}; }', context: {html: '<!doctype html><html><head><meta charset=\"utf-8\"><style>html,body{margin:0;padding:0;width:1080px;height:1920px;overflow:hidden;background:#0B1235}svg{display:block;width:1080px;height:1920px}</style></head><body>' + $json.svg + '</body></html>'} }) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 1200
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "name": "006 - Render PNG via Chromium",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        816,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "={{ $('Prepare Topic').first().json.chatId }}",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "={{ '🎨 السلايد ' + $('006 - Build SVG Slide Template').item.json.slideNumber + ' من 7 — PNG 1080×1920' }}",
+          "fileName": "={{ '006-slide-' + String($('006 - Build SVG Slide Template').item.json.slideNumber).padStart(2,'0') + '.png' }}"
+        }
+      },
+      "name": "006 - Send PNG to Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1008,
+        672
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items=$input.all();return items.map((item,i)=>{const payload=item.json;const raw=payload.image||payload.data||payload.result?.image||payload.result?.data;if(!raw)throw new Error('Browserless did not return image data: '+JSON.stringify(payload).slice(0,250));let bytes;if(typeof raw==='string'){bytes=/^\\d+(,\\d+)+$/.test(raw)?Buffer.from(raw.split(',').map(Number)):Buffer.from(/^\\d+(,\\d+)+$/.test(raw) ? raw.split(',').map(Number) : raw.replace(/^data:image\\/png;base64,/,''),'base64')}else if(Array.isArray(raw)){bytes=Buffer.from(raw)}else if(raw&&raw.type==='Buffer'&&Array.isArray(raw.data)){bytes=Buffer.from(raw.data)}else throw new Error('Unexpected screenshot payload');if(bytes.length<8||bytes.subarray(0,8).toString('hex')!=='89504e470d0a1a0a')throw new Error('Screenshot is not a valid PNG');return {json:{slideNumber:i+1,bytes:bytes.length},binary:{data:{data:bytes.toString('base64'),mimeType:'image/png',fileName:'006-slide-'+String(i+1).padStart(2,'0')+'.png'}}};});"
+      },
+      "name": "006 - Decode and Validate PNG",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        816,
+        672
+      ]
+    }
+  ],
+  "connections": {
+    "006 Telegram Topic": {
+      "main": [
+        [
+          {
+            "node": "Prepare Topic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Topic": {
+      "main": [
+        [
+          {
+            "node": "Groq - Generate Arabic Carousel Copy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq - Generate Arabic Carousel Copy": {
+      "main": [
+        [
+          {
+            "node": "Telegram - Review Draft",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "006 - Split into 7 Slides",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "006 - Split into 7 Slides": {
+      "main": [
+        [
+          {
+            "node": "006 - Build SVG Slide Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "006 - Build SVG Slide Template": {
+      "main": [
+        [
+          {
+            "node": "006 - Render PNG via Chromium",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "006 - Render PNG via Chromium": {
+      "main": [
+        [
+          {
+            "node": "006 - Decode and Validate PNG",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "006 - Decode and Validate PNG": {
+      "main": [
+        [
+          {
+            "node": "006 - Send PNG to Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false
+}
