@@ -15,6 +15,7 @@ An open-source library of 365 N8N automation workflows. Each project is ready to
 | 003 | [Amazon Price Tracker](projects/003-Amazon-Price-Tracker) | متتبع أسعار أمازون | Amazon, Telegram, N8N | ✅ Completed |
 | 004 | [Universal AI Email Assistant](projects/004-Universal-AI-Email-Assistant) | مساعد بريد إلكتروني ذكي | n8n, Groq, Telegram, Google Sheets, IMAP, SMTP | ✅ Completed |
 | 005 | [Smart Content AI Studio](projects/005-Smart-Content-AI-Studio) | استوديو أفكار المحتوى الذكي | n8n, Groq, Telegram | ✅ Completed |
+| 006 | [AI Carousel Generator](projects/006-AI-Carousel-Generator) | مولّد سلايدات الكاروسيل بالذكاء الاصطناعي | n8n, Groq, Telegram, Chromium | ✅ Completed |
 ---
 
 ## 🚀 How to Use | كيفية الاستخدام
